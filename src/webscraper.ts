@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const $ = require('cheerio');
 
+
+//TODO - Seperate URL service and allow injection of HTML file instead
 export class Scraper {
     outputToFile(html:any) {
         fs.writeFile("test.html", html, function(err: any) {
