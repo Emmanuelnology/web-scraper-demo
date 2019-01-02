@@ -1,1 +1,1 @@
-{"version":3,"file":"webscraper.spec.js","sourceRoot":"","sources":["webscraper.spec.ts"],"names":[],"mappings":""}
+{"version":3,"file":"webscraper.spec.js","sourceRoot":"","sources":["webscraper.spec.ts"],"names":[],"mappings":";;AAAA,gDAAsD;AACtD,6BAA8B;AAE9B,QAAQ,CAAC,SAAS,EAAE;IAChB,EAAE,CAAC,oBAAoB,EAAE;QACrB,IAAM,MAAM,GAAG,sIAAsI,CAAC;QACtJ,IAAM,SAAS,GAAG,uYAAuY,CAAA;QACzZ,IAAM,iBAAiB,GAAG,sEAAsE,CAAC;QACjG,IAAI,IAAI,GAAG,IAAI,8BAAiB,CAAC,QAAQ,CAAC,CAAC;QAC3C,aAAM,CAAC,IAAI,CAAC,CAAC,EAAE,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC;IAC7B,CAAC,CAAC,CAAA;AACN,CAAC,CAAC,CAAC"}
