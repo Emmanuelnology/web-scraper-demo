@@ -13,11 +13,11 @@ export class Scraper {
             return true;
         });
     }
-
+    
     stripWhiteSpace(s:string) {
         return s.replace(/[\n\r\t]/g,''); 
     }
-
+    
     constructor() {
     }
     getURL() {
@@ -25,14 +25,27 @@ export class Scraper {
     }
 }
 
-export class RightmoveProperty extends Scraper {
-    private html:string;
-
-    getHTML() {
-        return puppeteer
+export class WebPage {
+    content:any;
+    constructor(private url:string) {
+        this.content = puppeteer
         .launch()
         .then((browser: { newPage: () => void; }) => browser.newPage())
-        .then((page:any) => page.goto(this.url()).then(() => page.content()))
+        .then((page:any) => page.goto(this.url).then(() => page.content()))
+        .catch((err: any) => console.log(err));
+    }
+
+    async get() {
+        
+    }
+}
+
+export class RightmoveProperty extends Scraper {
+    private html:string;
+    
+    getHTML() {
+        let page = new WebPage(this.url());
+        return page.content
         .then((html:any) => {
             let rooms:any[] = [];
             $('.sect > strong', html).each((index:number, element:any) => {
@@ -45,15 +58,15 @@ export class RightmoveProperty extends Scraper {
                 rooms: rooms
             }
             
-          })
-        .catch((err: any) => console.log(err));
+        })
+        
     };
-
+    
     url() {
         return 'https://www.rightmove.co.uk/property-for-sale/property-' + this.propertyID + '.html';
     }
-
-
+    
+    
     constructor(private propertyID:number = 77934770) {
         super();
         this.getHTML().then((property:any)=> {
