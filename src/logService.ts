@@ -3,17 +3,16 @@ import {appendFile} from 'fs';
 export class Log {
 
 error(err:Error) {
-    this.logMessageToConsole(false, err.message);
-    //this.writeLog(true, err.message);
+    this.logMessageToConsole('ERROR', '\x1b[31m', err.message);
+    //this.writeLog('ERROR', '\x1b[31m', err.message);
 }
 
 success(message:string) {
-    this.logMessageToConsole(true, message);
+    this.logMessageToConsole('SUCCESS', '\x1b[32m', message);
 }
 
-private writeLog(isSuccess:boolean, message:string) {
+private writeLog(type:string, color:string, message:string) {
     let now = new Date();
-    let type = (isSuccess) ? 'SUCCESS':'ERROR';
     let line = '"' + type + '","' + now.toISOString() + '","' + message + '"\n';
     appendFile('log.txt', line, (err) => {
         if (err) {
@@ -22,10 +21,8 @@ private writeLog(isSuccess:boolean, message:string) {
       });
 }
 
-private logMessageToConsole(isSuccess:boolean, message:string) {
+private logMessageToConsole(type:string, color:string, message:string) {
     let now = new Date();
-    let type = (isSuccess) ? 'SUCCESS':'ERROR';
-    let color = (isSuccess) ? '\x1b[32m':'\x1b[31m';
     console.log(color + type + ': ' + now.toISOString() + ' - ' + message + "\x1b[0m");
 }
 

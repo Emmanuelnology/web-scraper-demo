@@ -5,14 +5,13 @@ var Log = (function () {
     function Log() {
     }
     Log.prototype.error = function (err) {
-        this.logMessageToConsole(false, err.message);
+        this.logMessageToConsole('ERROR', '\x1b[31m', err.message);
     };
     Log.prototype.success = function (message) {
-        this.logMessageToConsole(true, message);
+        this.logMessageToConsole('SUCCESS', '\x1b[32m', message);
     };
-    Log.prototype.writeLog = function (isSuccess, message) {
+    Log.prototype.writeLog = function (type, color, message) {
         var now = new Date();
-        var type = (isSuccess) ? 'SUCCESS' : 'ERROR';
         var line = '"' + type + '","' + now.toISOString() + '","' + message + '"\n';
         fs_1.appendFile('log.txt', line, function (err) {
             if (err) {
@@ -20,10 +19,8 @@ var Log = (function () {
             }
         });
     };
-    Log.prototype.logMessageToConsole = function (isSuccess, message) {
+    Log.prototype.logMessageToConsole = function (type, color, message) {
         var now = new Date();
-        var type = (isSuccess) ? 'SUCCESS' : 'ERROR';
-        var color = (isSuccess) ? '\x1b[32m' : '\x1b[31m';
         console.log(color + type + ': ' + now.toISOString() + ' - ' + message + "\x1b[0m");
     };
     return Log;
