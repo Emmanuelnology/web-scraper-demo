@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "serve": "tsc --watch",
-    "test": "mocha test/**/*.spec.js -w"
+    "test": "mocha test/**/*.spec.js -w --timeout 20000"
   },
   "repository": {
     "type": "git",
@@ -19,16 +19,22 @@
   "homepage": "https://github.com/nology-tech/web-scrape-demo#readme",
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/cheerio": "^0.22.10",
     "@types/mocha": "^5.2.5",
+    "@types/puppeteer": "^1.11.1",
     "chai": "^4.2.0",
-    "mocha": "^5.2.0",
-    "typescript": "^3.2.2",
+    "chai-as-promised": "^7.1.1",
     "cheerio": "^1.0.0-rc.2",
+    "jsonic": "^0.3.1",
+    "mocha": "^5.2.0",
     "puppeteer": "^1.11.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "typescript": "^3.2.2"
   },
   "dependencies": {
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/jsonic": "^0.3.0",
     "@types/request-promise": "^4.1.42",
     "rightmove-scraper": "^1.0.3"
   }

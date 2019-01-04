@@ -48,80 +48,107 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var puppeteer = require('puppeteer');
-var fs = require('fs');
-var $ = require('cheerio');
-var Scraper = (function () {
-    function Scraper() {
+var $ = require("cheerio");
+var webpage_1 = require("./webpage");
+var Property = (function () {
+    function Property() {
     }
-    Scraper.prototype.outputToFile = function (html) {
-        fs.writeFile("test.html", html, function (err) {
-            if (err) {
-                return console.log(err);
-            }
-            return true;
-        });
+    Property.prototype.stripWhiteSpace = function (s) {
+        return s.replace(/[\n\r\t]/g, '').trim();
     };
-    Scraper.prototype.stripWhiteSpace = function (s) {
-        return s.replace(/[\n\r\t]/g, '');
+    Property.prototype.stripNonDigits = function (s) {
+        return +s.replace(/\D/g, '');
     };
-    Scraper.prototype.getURL = function () {
-    };
-    return Scraper;
-}());
-exports.Scraper = Scraper;
-var WebPage = (function () {
-    function WebPage(url) {
-        var _this = this;
-        this.url = url;
-        this.content = puppeteer
-            .launch()
-            .then(function (browser) { return browser.newPage(); })
-            .then(function (page) { return page.goto(_this.url).then(function () { return page.content(); }); })["catch"](function (err) { return console.log(err); });
-    }
-    WebPage.prototype.get = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2];
+    Property.prototype.searchFor = function (cheerioSelectors, html, text) {
+        var result = false;
+        for (var _i = 0, cheerioSelectors_1 = cheerioSelectors; _i < cheerioSelectors_1.length; _i++) {
+            var selector = cheerioSelectors_1[_i];
+            var headers = $(selector, html);
+            headers.each(function (index, element) {
+                var searchText = $(element).text().toLowerCase();
+                if (searchText.indexOf(text) != -1)
+                    result = true;
             });
-        });
+        }
+        return result;
     };
-    return WebPage;
+    Property.prototype.getType = function (title) {
+        var type;
+        if (title.indexOf('semi-detached') != -1)
+            type = "semi-detached";
+        else if (title.indexOf('detached') != -1)
+            type = "detached";
+        else if (title.indexOf('penthouse') != -1)
+            type = "penthouse";
+        else if (title.indexOf('apartment') != -1)
+            type = "apartment";
+        else if (title.indexOf('flat') != -1)
+            type = "flat";
+        else if (title.indexOf('terrace') != -1)
+            type = "terraced";
+        else if (title.indexOf('retirement') != -1)
+            type = "retirement";
+        else if (title.indexOf('house') != -1)
+            type = "house";
+        else {
+            type = "other";
+        }
+        return type;
+    };
+    return Property;
 }());
-exports.WebPage = WebPage;
+exports.Property = Property;
 var RightmoveProperty = (function (_super) {
     __extends(RightmoveProperty, _super);
-    function RightmoveProperty(propertyID) {
+    function RightmoveProperty(propertyID, page) {
         if (propertyID === void 0) { propertyID = 77934770; }
+        if (page === void 0) { page = new webpage_1.WebPage(); }
         var _this = _super.call(this) || this;
         _this.propertyID = propertyID;
-        _this.getHTML().then(function (property) {
-            console.log(property);
-        });
+        _this.page = page;
         return _this;
     }
-    RightmoveProperty.prototype.getHTML = function () {
-        var _this = this;
-        var page = new WebPage(this.url());
-        return page.content
-            .then(function (html) {
-            var rooms = [];
-            $('.sect > strong', html).each(function (index, element) {
-                rooms.push($(element).text());
+    RightmoveProperty.prototype.get = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var url, property, html, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        url = this.url();
+                        property = {};
+                        if (!url) return [3, 5];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4, this.page.getContent(url)];
+                    case 2:
+                        html = _a.sent();
+                        property.title = this.stripWhiteSpace($('h1', html).text());
+                        property.price = this.stripNonDigits($('#propertyHeaderPrice', html).text());
+                        property.streetAddress = this.stripWhiteSpace($('.property-header-bedroom-and-price address', html).text());
+                        property.bedroomCount = (property.title.indexOf('bedroom') == 2) ? +property.title.substr(0, 1) : undefined;
+                        property.type = this.getType(property.title);
+                        property.hasGarden = this.searchFor(['[itemProp=description]', '.key-features li'], html, 'garden');
+                        property.hasGarage = this.searchFor(['[itemProp=description]', '.key-features li'], html, 'garage');
+                        return [2, property];
+                    case 3:
+                        err_1 = _a.sent();
+                        console.error(err_1);
+                        return [3, 4];
+                    case 4: return [3, 6];
+                    case 5: throw new Error("No URL");
+                    case 6: return [2];
+                }
             });
-            return {
-                title: _this.stripWhiteSpace($('h1', html).text()),
-                price: _this.stripWhiteSpace($('#propertyHeaderPrice', html).text()),
-                streetAddress: _this.stripWhiteSpace($('.property-header-bedroom-and-price address', html).text()),
-                rooms: rooms
-            };
         });
     };
     ;
     RightmoveProperty.prototype.url = function () {
-        return 'https://www.rightmove.co.uk/property-for-sale/property-' + this.propertyID + '.html';
+        if (this.propertyID)
+            return 'https://www.rightmove.co.uk/property-for-sale/property-' + this.propertyID + '.html';
+        return false;
     };
     return RightmoveProperty;
-}(Scraper));
+}(Property));
 exports.RightmoveProperty = RightmoveProperty;
 //# sourceMappingURL=webscraper.js.map
